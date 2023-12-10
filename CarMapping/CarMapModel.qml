@@ -18,8 +18,9 @@ Canvas {
 
     anchors.fill: parent
 
-    readonly property color obstacleColor: "red"
+    readonly property color obstacleColor: "orange"
     readonly property int obstacleSideLength: 4
+    readonly property color carColor: "blue"
 
     property int xReading: -100
     property int yReading: -100
@@ -31,6 +32,10 @@ Canvas {
 
         ctx.fillStyle = obstacleColor
         ctx.fillRect(xReading, yReading, obstacleSideLength, obstacleSideLength)
+    }
+
+    CarModel {
+        carColor: carColor
     }
 
     // -> This is to simulate input only
