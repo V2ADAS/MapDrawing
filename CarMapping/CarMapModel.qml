@@ -16,6 +16,7 @@ Canvas {
         }
     }
 
+    id: canvas
     anchors.fill: parent
 
     readonly property color obstacleColor: "orange"
@@ -35,7 +36,16 @@ Canvas {
     }
 
     CarModel {
-        carColor: carColor
+        carColor: canvas.carColor
+    }
+
+    Connections {
+        target: car
+        onNewReading: {
+            xReading = xAbs
+            yReading = yAbs
+            canvas.requestPaint()
+        }
     }
 
     // -> This is to simulate input only
@@ -44,9 +54,9 @@ Canvas {
         anchors.fill: parent
 
         onPressed: {
-            parent.xReading = mouseX
-            parent.yReading = mouseY
-            parent.requestPaint()
+            // parent.xReading = mouseX
+            // parent.yReading = mouseY
+            car.receivedReading(mouseX, mouseY)
         }
     }
     // <-

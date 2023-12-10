@@ -1,5 +1,8 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
+
+#include "car.h"
 
 int main(int argc, char *argv[])
 {
@@ -19,6 +22,10 @@ int main(int argc, char *argv[])
                 QCoreApplication::exit(-1);
         },
         Qt::QueuedConnection);
+
+    Car *car = new Car();
+    engine.rootContext()->setContextProperty("car", car);
+
     engine.load(url);
 
     return app.exec();
