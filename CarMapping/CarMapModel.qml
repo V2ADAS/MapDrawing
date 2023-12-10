@@ -3,7 +3,7 @@
 import QtQuick 2.15
 import QtPositioning 5.15
 
-QtObject {
+Canvas {
     property variant positions: []
 
     function updatePosition(latitude, longitude) {
@@ -15,4 +15,34 @@ QtObject {
             positions.shift(); // remove the oldest position
         }
     }
+
+    anchors.fill: parent
+
+    readonly property color obstacleColor: "red"
+    readonly property int obstacleSideLength: 4
+
+    property int xReading: -100
+    property int yReading: -100
+
+    onPaint: {
+        var ctx = getContext('2d')
+
+        label.text = `Painting at: (${xReading}, ${yReading})`
+
+        ctx.fillStyle = obstacleColor
+        ctx.fillRect(xReading, yReading, obstacleSideLength, obstacleSideLength)
+    }
+
+    // -> This is to simulate input only
+    MouseArea {
+        id: area
+        anchors.fill: parent
+
+        onPressed: {
+            parent.xReading = mouseX
+            parent.yReading = mouseY
+            parent.requestPaint()
+        }
+    }
+    // <-
 }
