@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/qml">
+        <file>FeatureButton.qml</file>
+        <file>automotive.qml</file>
+        <file>LargeLabel.qml</file>
+        <file>Header.qml</file>
+        <file>Label.qml</file>
+        <file>Controls.qml</file>
+        <file>WifiConnection.qml</file>
+        <file>ReceiverPanel.qml</file>
+    </qresource>
+</RCC>
