@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>main.qml</file>
-        <file>CarMapModel.qml</file>
-        <file>CarModel.qml</file>
-    </qresource>
-</RCC>
