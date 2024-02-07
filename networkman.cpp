@@ -89,12 +89,21 @@ void NetworkMan::sendMessage(QString message)
 }
 
 void NetworkMan::getWifiInterface() {
-    for (QNetworkInterface &interface : QNetworkInterface::allInterfaces()) {
+    // Get all network interfaces
+    QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
+
+    // Loop through each interface
+    for (int i = 0; i < interfaces.size(); ++i) {
+        QNetworkInterface &interface = interfaces[i];
+
+        // Check if it's a Wi-Fi interface
         if (interface.type() == QNetworkInterface::Wifi) {
             wifiInterface = interface;
-            return;
+            qDebug() << wifiInterface.name();
+            return; // Exit loop if found
         }
     }
+
     wifiInterface = QNetworkInterface();
     return;
 }
