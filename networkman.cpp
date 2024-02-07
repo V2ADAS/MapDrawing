@@ -43,8 +43,8 @@ QString NetworkMan::getGatewayIp() {
     PIP_ADAPTER_INFO pAdapterInfo = AdapterInfo;
     while (pAdapterInfo) {
         IP_ADDR_STRING gateway = pAdapterInfo->GatewayList;
-        if (gateway.String[0] != '\0') {
-            return QString::fromUtf8(gateway.String);
+        if (gateway.IpAddress.String[0] != '\0') {
+            return QString::fromUtf8(gateway.IpAddress.String);
         }
         pAdapterInfo = pAdapterInfo->Next;
     }
