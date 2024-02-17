@@ -8,6 +8,8 @@ SOURCES += \
     drawingman.cpp \
     networkman.cpp \
 
+LIBS += -liphlpapi
+
 RESOURCES += \
     icons/icons.qrc \
     imagine-assets/imagine-assets.qrc \

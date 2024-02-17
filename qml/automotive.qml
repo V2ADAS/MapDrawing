@@ -66,10 +66,11 @@ ApplicationWindow {
 
                 currentIndex: 1
 
-                Layout.fillWidth: true
+                width: parent.width / 10 * 2
+                // Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.horizontalStretchFactor: 2
 
+                // Layout.horizontalStretchFactor: 2
                 ButtonGroup {
                     id: radioGroup
                 }
@@ -89,7 +90,8 @@ ApplicationWindow {
                     icon.name: "navigation"
                     Layout.fillHeight: true
                     onClicked: {
-                        checked ? drawingMan.runScript() : drawingMan.stopScript()
+                        checked ? drawingMan.runScript(
+                                      ) : drawingMan.stopScript()
                     }
                 }
 
@@ -135,10 +137,11 @@ ApplicationWindow {
             StackLayout {
                 currentIndex: leftTabBar.currentIndex
 
-                Layout.fillWidth: true
+                // Layout.fillWidth: true
+                width: parent.width / 10 * 8
                 Layout.fillHeight: true
-                Layout.horizontalStretchFactor: 8
 
+                // Layout.horizontalStretchFactor: 8
                 Controls {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
@@ -161,9 +164,7 @@ ApplicationWindow {
                 implicitWidth: 350
                 visible: false
 
-                ReceiverPanel {
-
-                }
+                ReceiverPanel {}
             }
         }
     }

@@ -18,7 +18,6 @@ NetworkMan::NetworkMan(QObject *parent) : QObject{parent} {
 QString NetworkMan::getCurrentIp() {
     // Get the list of local IP addresses
     getWifiInterface();
-
     if (wifiInterface.isValid()) {
         QList<QNetworkAddressEntry> addresses = wifiInterface.addressEntries();
         if (!addresses.isEmpty()) {
@@ -30,24 +29,51 @@ QString NetworkMan::getCurrentIp() {
 
 QString NetworkMan::getGatewayIp() {
 #ifdef Q_OS_WIN
-    // Windows-specific code to retrieve the default gateway
-    IP_ADAPTER_INFO AdapterInfo[16];
-    DWORD dwBufLen = sizeof(AdapterInfo);
-    DWORD dwStatus = GetAdaptersInfo(AdapterInfo, &dwBufLen);
 
-    if (dwStatus != ERROR_SUCCESS) {
-        qDebug() << "Error getting adapter information";
-        return QString();
-    }
+    QString gateway;
+    bool init;
+        ULONG tableSize = 0;
 
-    PIP_ADAPTER_INFO pAdapterInfo = AdapterInfo;
-    while (pAdapterInfo) {
-        IP_ADDR_STRING gateway = pAdapterInfo->GatewayList;
-        if (gateway.IpAddress.String[0] != '\0') {
-            return QString::fromUtf8(gateway.IpAddress.String);
+        tableSize = sizeof(MIB_IPFORWARDTABLE);
+        DWORD status = GetIpForwardTable(nullptr, &tableSize, false);
+        if (status != ERROR_SUCCESS && status != ERROR_INSUFFICIENT_BUFFER) {
+            qWarning() << "GetIpForwardTable failed:", status;
+            init = false;
+        } else {
+            init = true;
         }
-        pAdapterInfo = pAdapterInfo->Next;
-    }
+
+        if (!init) {
+            return "";
+        }
+
+        PMIB_IPFORWARDTABLE table = (PMIB_IPFORWARDTABLE)malloc(tableSize);
+        if (!table) {
+            qWarning() << "Memory allocation failed";
+            return "";
+        }
+
+        status = GetIpForwardTable(table, &tableSize, false);
+        if (status != ERROR_SUCCESS) {
+            qWarning() << "GetIpForwardTable failed:", status;
+            free(table);
+            return "";
+        }
+
+        for (DWORD i = 0; i < table->dwNumEntries; i++) {
+            if (table->table[i].dwForwardDest == 0) { // Check for default gateway
+                gateway = QHostAddress(table->table[i].dwForwardNextHop).toString();
+                free(table);
+
+                QStringList parts = gateway.split(".");
+                std::reverse(parts.begin(), parts.end());
+                return parts.join(".");
+            }
+        }
+
+        free(table);
+        qWarning() << "Default gateway not found";
+        return "";
 #elif defined(Q_OS_UNIX)
     // UNIX/Linux-specific code to retrieve the default gateway
     FILE *fp = popen("ip route show default", "r");
@@ -94,14 +120,26 @@ void NetworkMan::getWifiInterface() {
 
     // Loop through each interface
     for (int i = 0; i < interfaces.size(); ++i) {
-        QNetworkInterface &interface = interfaces[i];
+        QNetworkInterface &iface = interfaces[i];
 
+#ifdef Q_OS_WIN
         // Check if it's a Wi-Fi interface
-        if (interface.type() == QNetworkInterface::Wifi) {
-            wifiInterface = interface;
+        if (iface.type() == QNetworkInterface::Wifi) {
+            wifiInterface = iface;
+            qDebug() << wifiInterface.humanReadableName();
+            if (wifiInterface.humanReadableName() == "Wi-Fi") {
+                return;
+            }
+            // return; // Exit loop if found
+        }
+#else
+        // Check if it's a Wi-Fi interface
+        if (iface.type() == QNetworkInterface::Wifi) {
+            wifiInterface = iface;
             qDebug() << wifiInterface.name();
             return; // Exit loop if found
         }
+#endif
     }
 
     wifiInterface = QNetworkInterface();
