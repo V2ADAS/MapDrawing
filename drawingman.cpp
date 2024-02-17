@@ -20,14 +20,18 @@ DrawingMan::DrawingMan(QString appDir, QObject *parent) : QObject{parent} {
 }
 
 void DrawingMan::runScript() {
-#ifdef Q_OS_UNIX
-    QString runnerFile = "/runner.sh";
+    QString runnerFile;
+#ifdef Q_OS_WIN
+    runnerFile = "/runner.bat";
+#else
+    runnerFile = "/runner.sh";
+#endif
+
     process.start(appDir + runnerFile, QStringList() << channelFilePath << QString::number(numSensors));
 
     process.waitForStarted();
 
     timer.start(10);
-#endif
 }
 
 void DrawingMan::stopScript() { process.close(); }
