@@ -7,6 +7,7 @@
 #include <QSettings>
 #include <QQuickStyle>
 #include <QIcon>
+#include <QDir>
 #include "networkman.h"
 #include "drawingman.h"
 
@@ -21,7 +22,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     NetworkMan *netMan = new NetworkMan;
-    DrawingMan *drawingMan = new DrawingMan("/home/khaled/Documents/qt/automotive");
+    DrawingMan *drawingMan = new DrawingMan(QDir::currentPath());
     engine.rootContext()->setContextProperty("netMan", netMan);
     engine.rootContext()->setContextProperty("drawingMan", drawingMan);
 
