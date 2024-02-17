@@ -21,18 +21,8 @@ DrawingMan::DrawingMan(QString appDir, QObject *parent) : QObject{parent} {
 
 void DrawingMan::runScript() {
 #ifdef Q_OS_UNIX
-    // Path to your Python script
-    QString pythonScript = "/draw.py";
-
-    // Start the process
-    QStringList commands = QStringList()
-                           << "source " + appDir + "/.venv/bin/activate"
-                           << "bash -c 'kitty --hold --execute python " + appDir +
-                                  pythonScript + " " + channelFilePath + " " +
-                                  QString::number(numSensors) + "'";
-    QString commandString = commands.join("; ");
-    qDebug() << "Executing: " << commandString;
-    process.start("bash", QStringList() << "-c" << commandString);
+    QString runnerFile = "/runner.sh";
+    process.start(appDir + runnerFile, QStringList() << channelFilePath << QString::number(numSensors));
 
     process.waitForStarted();
 
