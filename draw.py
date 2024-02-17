@@ -4,6 +4,7 @@ import matplotlib.patches as patches
 import numpy as np
 import pandas as pd
 import sys
+import time
 
 MAX_HISTORY=50
 
@@ -118,22 +119,19 @@ def get_input(file):
     WARNING! this function will block until a valid line is read
     '''
     while True:
-        data = list(map(lambda x: float(x or 0), file.readline().strip().split(',')))
+        data = list(map(lambda x: float(x or 0), file.readlines()[-1].strip().split(','),))
         coords, trans = data[:-2], data[-2:]
-        print(trans)
         if len(coords) != 2 * num_sensors:
             plt.pause(0.005)
         else:
             break
 
-    return np.array(coords).reshape(1, num_sensors, 2)
+    return np.array(coords).reshape([1, num_sensors, 2])
 
 
 def plot_data(ax):
-    global data_mem
-
     data_mem_plt = data_mem.reshape((-1, 2))
-    alphas = np.repeat(np.linspace(0.01, 1, data_mem.shape[0]) ** 2, data_mem_plt.shape[0] / data_mem.shape[0])
+    alphas = np.repeat(np.linspace(0.01, 1, data_mem.shape[0]) ** 2, data_mem_plt.shape[0] / data_mem.shape[0],)
     ax.scatter(data_mem_plt[:, 0], data_mem_plt[:, 1], color='red', alpha=alphas, s=4)
     return
 
