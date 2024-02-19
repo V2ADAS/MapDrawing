@@ -1,14 +1,15 @@
 TEMPLATE = app
 TARGET = automotive
 QT += core qml quick quickcontrols2 network
-CONFIG += qml_debug console
 
 SOURCES += \
     automotive.cpp \
     drawingman.cpp \
     networkman.cpp \
 
-LIBS += -liphlpapi
+win32 {
+    LIBS += -liphlpapi
+}
 
 RESOURCES += \
     icons/icons.qrc \
